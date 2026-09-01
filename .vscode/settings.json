@@ -1,0 +1,8 @@
+﻿{
+    "mdb.presetConnections": [
+        {
+            "name": "freelanceCluster (Atlas)",
+            "connectionString": "mongodb://freelanceplatform:yOSeVZuJOReuc3Yi@ac-ysbyuuq-shard-00-00.3nic5bo.mongodb.net:27017,ac-ysbyuuq-shard-00-01.3nic5bo.mongodb.net:27017,ac-ysbyuuq-shard-00-02.3nic5bo.mongodb.net:27017/freelance-platform?replicaSet=atlas-6n3tcd-shard-0&authSource=admin&ssl=true"
+        }
+    ]
+}

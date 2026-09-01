@@ -1,0 +1,35 @@
+﻿Registering client...
+{
+    "user":  {
+                 "name":  "Client A",
+                 "email":  "client@example.com",
+                 "role":  "client",
+                 "_id":  "6a927bc5700b4e0169a49254",
+                 "createdAt":  "2026-08-29T06:27:17.837Z",
+                 "updatedAt":  "2026-08-29T06:27:17.837Z",
+                 "id":  "6a927bc5700b4e0169a49254"
+             },
+    "token":  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhOTI3YmM1NzAwYjRlMDE2OWE0OTI1NCIsImlhdCI6MTc4Nzk4NDgzN30.rseU3oj75I63Gb5PcpNH357BjIN-5XBtK4WzNT5fnTk"
+}
+Registering freelancer...
+{
+    "user":  {
+                 "name":  "Freelancer B",
+                 "email":  "freelancer@example.com",
+                 "role":  "freelancer",
+                 "_id":  "6a927bc6700b4e0169a4925b",
+                 "createdAt":  "2026-08-29T06:27:18.046Z",
+                 "updatedAt":  "2026-08-29T06:27:18.046Z",
+                 "id":  "6a927bc6700b4e0169a4925b"
+             },
+    "token":  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhOTI3YmM2NzAwYjRlMDE2OWE0OTI1YiIsImlhdCI6MTc4Nzk4NDgzOH0.nQv-KcuT4fxs0CZndjMJhLKytWvriuydAgrkhcGfkYM"
+}
+Client posting a job...
+Invoke-RestMethod : {"message":"Invalid token"}
+At C:\Users\soma2\Videos\freelance-platform\server\smoke_test.ps1:18 char:8
++ $job = Invoke-RestMethod -Uri "$Api/jobs" -Method Post -Headers @{ Au ...
++        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidOperation: (System.Net.HttpWebRequest:HttpWebRequest) 
+    [Invoke-RestMethod], WebException
+    + FullyQualifiedErrorId : WebCmdletWebResponseException,Microsoft.PowerShell.Commands. 
+   InvokeRestMethodCommand

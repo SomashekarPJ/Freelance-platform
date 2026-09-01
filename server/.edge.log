@@ -1,0 +1,51 @@
+﻿
+=== EDGE CASE TESTS ===
+1. Register + login (duplicate email should be 409)...
+   first register OK, token present: True
+   duplicate register correctly rejected with HTTP 409
+2. Login with correct credentials...
+   login OK, token present: True
+3. Login with wrong password (should be 401)...
+   wrong password correctly rejected with HTTP 401
+4. Freelancer tries to post a job (should be 403)...
+   freelancer blocked from posting with HTTP 403
+5. Unauthenticated request to protected route (should be 401)...
+   unauthenticated request blocked with HTTP 401
+6. Freelancer can view own contract (happy path)...
+   freelancer can view own contract: OK
+7. Invalid job id (should be 422)...
+   invalid id rejected with HTTP 422
+8. Complete + approve contract flow...
+
+
+_id           : 6a927bc6700b4e0169a4926c
+job           : 6a927bc6700b4e0169a49263
+bid           : 6a927bc6700b4e0169a49266
+client        : 6a927bc5700b4e0169a49256
+freelancer    : 6a927bc6700b4e0169a4925f
+status        : delivered
+paid          : False
+paymentIntent : 
+createdAt     : 2026-08-29T06:27:18.311Z
+updatedAt     : 2026-08-29T06:27:18.333Z
+__v           : 0
+
+   after freelancer completes -> status: delivered
+_id           : 6a927bc6700b4e0169a4926c
+job           : 6a927bc6700b4e0169a49263
+bid           : 6a927bc6700b4e0169a49266
+client        : 6a927bc5700b4e0169a49256
+freelancer    : 6a927bc6700b4e0169a4925f
+status        : approved
+paid          : False
+paymentIntent : 
+createdAt     : 2026-08-29T06:27:18.311Z
+updatedAt     : 2026-08-29T06:27:18.395Z
+__v           : 0
+
+   after client approves -> status: approved
+   job status after approval: completed
+
+All edge case tests done.
+
+

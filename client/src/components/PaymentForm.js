@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
+import { CardElement, Elements, useElements, useStripe } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
 function CheckoutForm({ clientSecret, onSuccess }){
   const stripe = useStripe();
@@ -13,18 +13,23 @@ function CheckoutForm({ clientSecret, onSuccess }){
     const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, { payment_method: { card } });
     if(error){
       alert('Payment failed: ' + error.message);
-    } else if(paymentIntent && paymentIntent.status==='succeeded'){
+    } else if(paymentIntent && paymentIntent.status === 'succeeded'){
       alert('Payment succeeded');
       if (typeof onSuccess === 'function') onSuccess(paymentIntent);
     }
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div style={{border:'1px solid #ccc',padding:10,marginBottom:10}}>
-        <CardElement />
-      </div>
-      <button type="submit" disabled={!stripe}>Pay</button>
+    <form onSubmit={handleSubmit} className="payment-form">
+      <label className="field">
+        <span>Card details</span>
+        <div className="stripe-card">
+          <CardElement options={{ style: { base: { fontSize: '16px', color: '#172033' } } }} />
+        </div>
+      </label>
+      <button type="submit" disabled={!stripe} className="button button--primary">
+        Pay securely
+      </button>
     </form>
   );
 }

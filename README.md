@@ -1,73 +1,124 @@
-# Freelance Bidding Platform (Mini Fiverr Clone)
+# FreelanceHub
 
-Minimal MERN-stack freelance marketplace MVP.
+FreelanceHub is a MERN freelance marketplace MVP. Clients can publish jobs, freelancers can bid, accepted bids become contracts, and project communication stays inside the app.
 
-Quickstart
+## Features
 
-1. Backend
+- Client and freelancer authentication
+- Job posting and public job browsing
+- Freelancer bid submission
+- Client bid acceptance
+- Contract tracking for active, delivered, and approved work
+- Basic user-to-user messaging
+- Stripe PaymentIntent flow for test payments
+- Responsive redesigned React interface
 
-- cd server
-- npm install
-- create a `.env` file with `MONGO_URI`, `JWT_SECRET`, and optionally `STRIPE_KEY`
-- npm run dev
+## Tech Stack
 
-2. Frontend
+- React 18 and React Router
+- Custom CSS design system
+- Express and Node.js
+- MongoDB with Mongoose
+- Optional in-memory MongoDB fallback for development
+- Stripe SDK and Stripe Elements
 
-- cd client
-- npm install
-- npm start
+## Project Structure
 
-Features
+```text
+freelance-platform/
+  client/   React frontend
+  server/   Express API, MongoDB models, routes, middleware
+```
 
-- User roles: client / freelancer
-- Post projects, place bids
-- Accept bid -> contract
-- Basic messaging
-- Stripe test key supported for mock payments (optional)
+## Prerequisites
 
-Smoke test
+- Node.js 18 through 25
+- npm
+- MongoDB Atlas connection string, local MongoDB, or the built-in in-memory fallback
+- Stripe test secret key and publishable key if testing payments
 
-1. Start the server (default port 5000):
+## Setup
+
+Install dependencies:
 
 ```bash
-cd server
-npm install
-npm run dev
+npm run install:all
 ```
 
-2. In another terminal, run the smoke test (requires `jq`):
+Create the backend environment file:
 
 ```bash
-cd server
-chmod +x smoke_test.sh
-./smoke_test.sh
+cp server/.env.example server/.env
 ```
 
-The script will register sample users, post a job, place a bid, and attempt to accept it.
- 
-Stripe setup
+Create the frontend environment file:
 
-- Set `STRIPE_KEY` in `server/.env` to your Stripe secret key (test key like `sk_test_...`).
-- To verify webhooks, set `STRIPE_WEBHOOK_SECRET` in `server/.env` and run the server with the raw body capture enabled (already configured).
-
-Example `.env`:
-
-```
-MONGO_URI=mongodb://<username>:<password>@ac-ysbyuuq-shard-00-00.3nic5bo.mongodb.net:27017,ac-ysbyuuq-shard-00-01.3nic5bo.mongodb.net:27017,ac-ysbyuuq-shard-00-02.3nic5bo.mongodb.net:27017/freelance-platform?replicaSet=atlas-6n3tcd-shard-0&authSource=admin&ssl=true
-JWT_SECRET=your_jwt_secret
-STRIPE_KEY=sk_test_...
-STRIPE_WEBHOOK_SECRET=whsec_...
+```bash
+cp client/.env.example client/.env
 ```
 
-### Troubleshooting the Atlas connection
+Update the values in both `.env` files for your machine.
 
-This project connects to MongoDB Atlas using a **non-SRV** `mongodb://` connection string (listing the Atlas shard hosts explicitly) rather than the `mongodb+srv://` URI Atlus gives you by default. Two problems were fixed:
+## Run Locally
 
-- **Wrong target** — the bundled `.env` / VS Code preset pointed at a local `mongodb://localhost`, which isn't running. They now point at your Atlas cluster.
-- **A Node DNS quirk on this machine** — `node -e "console.log(require('dns').getServers())"` prints `["127.0.0.1"]`, so Node's c-ares resolver cannot resolve `mongodb+srv://` SRV/TXT records (`querySrv ECONNREFUSED`). `nslookup`/`Resolve-DnsName` and the OS resolver work fine, and TCP to Atlas port 27017 is reachable — only `mongodb+srv://` is blocked.
+Start the API:
 
-The non-SRV string works because `mongoose`/`net.connect` resolve the shard hostnames via the OS resolver (`dns.lookup`) instead of c-ares SRV. If you fix the DNS (delete the stale blank `NameServer` key at `HKLM/SYSTEM/CurrentControlSet/Services/Tcpip/Parameters/NameServer` as Administrator, or set your adapter DNS to `10.88.154.118`), you can switch back to the standard `mongodb+srv://` URI.
+```bash
+npm run server
+```
 
-> ⚠️ Never commit real credentials. The real connection string lives only in the gitignored `server/.env`; `.env.example` and `README.md` use placeholders.
+Start the React app in a second terminal:
 
-Note: when a client accepts a bid the server will create a `Contract` and a Stripe PaymentIntent; the API will return a `clientSecret` which the client can use with Stripe Elements to complete payment. The webhook will mark the contract as paid when the PaymentIntent succeeds.
+```bash
+npm run client
+```
+
+Default URLs:
+
+- Frontend: `http://localhost:3000`
+- Backend API: `http://localhost:5000/api`
+- Health check: `http://localhost:5000/api/health`
+
+## Environment Variables
+
+Backend `server/.env`:
+
+```env
+PORT=5000
+MONGO_URI=mongodb://127.0.0.1:27017/freelance-platform
+USE_LOCAL_MONGO=false
+JWT_SECRET=replace_with_a_long_random_secret
+STRIPE_KEY=sk_test_replace_me
+STRIPE_WEBHOOK_SECRET=whsec_replace_me
+```
+
+Frontend `client/.env`:
+
+```env
+REACT_APP_API=http://localhost:5000/api
+REACT_APP_STRIPE_PUBLISHABLE=pk_test_replace_me
+```
+
+## Build
+
+```bash
+npm run build
+```
+
+The production frontend build is generated in `client/build/`. That folder is ignored by Git and should be generated during deployment.
+
+## Smoke Test
+
+With the backend running:
+
+```bash
+npm run smoke
+```
+
+The smoke test registers sample users, posts a job, places a bid, accepts it, and fetches the created contract.
+
+## GitHub Notes
+
+- Do not commit `.env` files or real credentials.
+- `client/build/` is generated output and is ignored.
+- GitHub Actions runs dependency installation and a client production build on pushes and pull requests.

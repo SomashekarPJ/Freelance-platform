@@ -1,6 +1,6 @@
-import React, { useState, useContext } from 'react';
-import { createPaymentIntent } from '../api';
+import React, { useContext, useState } from 'react';
 import { AuthContext } from '../AuthContext';
+import { createPaymentIntent } from '../api';
 import PaymentForm from './PaymentForm';
 
 export default function PaymentDemo(){
@@ -10,31 +10,35 @@ export default function PaymentDemo(){
   const [msg, setMsg] = useState('');
 
   async function createIntent(){
-    setMsg('Creating...');
+    setMsg('Creating payment intent...');
     const res = await createPaymentIntent(amount, 'usd', token);
     if(res.clientSecret){
       setClientSecret(res.clientSecret);
-      setMsg('Client secret received. Integrate with Stripe Elements to complete payment.');
+      setMsg('Payment intent ready');
     } else {
       setMsg(res.error || JSON.stringify(res));
     }
   }
 
   return (
-    <div>
-      <h3>Stripe Test Payment</h3>
-      <p>This demo requests a PaymentIntent client secret from the server. To finish payments, integrate Stripe Elements using the returned `clientSecret`.</p>
-      <div>
-        <label>Amount (USD): </label>
-        <input type="number" value={amount} onChange={e=>setAmount(parseFloat(e.target.value))} />
-        <button onClick={createIntent}>Create PaymentIntent</button>
-      </div>
-      <div style={{marginTop:10}}>{msg}</div>
-      {clientSecret && (
-        <div style={{marginTop:10}}>
-          <PaymentForm clientSecret={clientSecret} />
+    <div className="compose-layout">
+      <section className="section-heading section-heading--vertical">
+        <span className="eyebrow">Stripe test</span>
+        <h1>Payment demo</h1>
+        <p>Create a test PaymentIntent and complete it with Stripe Elements.</p>
+      </section>
+
+      <section className="form-card form-card--wide">
+        <div className="form-stack">
+          <label className="field">
+            <span>Amount (USD)</span>
+            <input type="number" value={amount} onChange={e=>setAmount(parseFloat(e.target.value || '0'))} />
+          </label>
+          <button type="button" onClick={createIntent} className="button button--primary">Create PaymentIntent</button>
+          {msg && <div className={`alert ${msg === 'Payment intent ready' ? 'alert--success' : 'alert--info'}`}>{msg}</div>}
+          {clientSecret && <PaymentForm clientSecret={clientSecret} />}
         </div>
-      )}
+      </section>
     </div>
   );
 }

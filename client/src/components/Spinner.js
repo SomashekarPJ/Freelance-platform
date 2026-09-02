@@ -1,10 +1,10 @@
 import React from 'react';
 
-const Spinner = () => (
-  <>
-    <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
-    <div style={{ width: 20, height: 20, border: '3px solid #e9ecef', borderTop: '3px solid #0a58ca', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-  </>
+const Spinner = ({ label = '', size = 'small' }) => (
+  <div className={`loader loader--${size}`} role="status" aria-live="polite">
+    <span className="loader__ring" aria-hidden="true" />
+    {label && <span>{label}</span>}
+  </div>
 );
 
 export default Spinner;

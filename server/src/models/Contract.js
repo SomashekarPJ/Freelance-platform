@@ -6,7 +6,7 @@ const ContractSchema = new Schema({
   bid: { type: Schema.Types.ObjectId, ref: 'Bid' },
   client: { type: Schema.Types.ObjectId, ref: 'User' },
   freelancer: { type: Schema.Types.ObjectId, ref: 'User' },
-  status: { type: String, enum: ['pending','active','delivered','approved','cancelled'], default: 'pending' },
+  status: { type: String, enum: ['pending','active','delivered','approved','cancelled'], default: 'active' },
   paid: { type: Boolean, default: false },
   paymentIntent: { type: String, default: null }
 }, { timestamps: true });

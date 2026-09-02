@@ -1,6 +1,6 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { AuthContext } from '../AuthContext';
-import { sendMessage, getConversation } from '../api';
+import { getConversation, sendMessage } from '../api';
 
 export default function Messages(){
   const { token, user } = useContext(AuthContext);
@@ -26,32 +26,69 @@ export default function Messages(){
       setText('');
       load();
     } else {
-      setError(res?.message || res?.error || (res.errors && res.errors[0]?.msg) || 'Failed to send');
+      setError(res?.message || res?.error || (res.errors && res.errors[0]?.msg) || 'Failed to send message');
     }
   }
 
   return (
-    <div>
-      <h3>Messages</h3>
-      {!user && <div style={{color:'red'}}>Please login to use messaging.</div>}
-      {error && <div style={{color:'red'}}>{error}</div>}
-      <div>
-        <input placeholder="Other user id" value={otherId} onChange={e=>setOtherId(e.target.value)} />
-        <button onClick={load}>Load</button>
-      </div>
-      <div style={{border:'1px solid #ccc',padding:10,marginTop:10}}>
-        {msgs.map(m => (
-          <div key={m._id}>
-            <strong>{user && String(m.from) === String(user._id) ? 'You' : m.from}</strong>: {m.text}
+    <div className="messages-layout">
+      <section className="section-heading section-heading--vertical">
+        <span className="eyebrow">Inbox</span>
+        <h1>Messages</h1>
+        <p>Load a conversation by user ID and keep project communication attached to the marketplace.</p>
+      </section>
+
+      {!user && <div className="alert alert--error">Please login to use messaging.</div>}
+      {error && <div className="alert alert--error">{error}</div>}
+
+      {user && (
+        <section className="messenger">
+          <div className="messenger__lookup">
+            <label className="field">
+              <span>Conversation user ID</span>
+              <input
+                placeholder="Paste a client or freelancer ID"
+                value={otherId}
+                onChange={e=>setOtherId(e.target.value)}
+              />
+            </label>
+            <button type="button" onClick={load} className="button button--secondary">Load chat</button>
           </div>
-        ))}
-        {msgs.length === 0 && <div style={{color:'#888'}}>No messages</div>}
-      </div>
-      <div>
-        <textarea value={text} onChange={e=>setText(e.target.value)} />
-        <button onClick={send}>Send</button>
-      </div>
+
+          <div className="message-window">
+            {msgs.map(message => {
+              const isMine = user && String(message.from) === String(user._id);
+              return (
+                <div key={message._id} className={`message-row ${isMine ? 'message-row--mine' : ''}`}>
+                  <div className="message-bubble">
+                    <span>{isMine ? 'You' : message.from}</span>
+                    <p>{message.text}</p>
+                  </div>
+                </div>
+              );
+            })}
+            {msgs.length === 0 && (
+              <div className="empty-state empty-state--compact">
+                <strong>No messages loaded</strong>
+                <span>Enter a user ID to open a conversation.</span>
+              </div>
+            )}
+          </div>
+
+          <div className="message-composer">
+            <label className="field">
+              <span>Message</span>
+              <textarea
+                placeholder="Write a project update..."
+                value={text}
+                onChange={e=>setText(e.target.value)}
+                rows={3}
+              />
+            </label>
+            <button type="button" onClick={send} className="button button--primary">Send</button>
+          </div>
+        </section>
+      )}
     </div>
   );
 }
-

@@ -44,16 +44,33 @@ async function startMemoryMongo() {
 
 async function connectMongo() {
   const preferred = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/freelance-platform';
-  try {
-    await mongoose.connect(preferred, { serverSelectionTimeoutMS: 5000 });
-    console.log('Connected to MongoDB at', preferred.replace(/\/\/.*@/, '//***@'));
-    return;
-  } catch (err) {
-    console.warn('Primary MongoDB unavailable:', err.message);
-    console.warn('Falling back to in-memory MongoDB...');
-    const uri = await startMemoryMongo();
-    await mongoose.connect(uri);
-    console.log('Connected to in-memory MongoDB');
+  const useLocal = process.env.USE_LOCAL_MONGO === 'true';
+  
+  if (useLocal) {
+    console.log('Using local MongoDB as specified by USE_LOCAL_MONGO=true');
+    try {
+      await mongoose.connect('mongodb://127.0.0.1:27017/freelance-platform', { serverSelectionTimeoutMS: 5000 });
+      console.log('Connected to local MongoDB');
+      return;
+    } catch (err) {
+      console.warn('Local MongoDB unavailable:', err.message);
+      console.warn('Falling back to in-memory MongoDB...');
+      const uri = await startMemoryMongo();
+      await mongoose.connect(uri);
+      console.log('Connected to in-memory MongoDB');
+    }
+  } else {
+    try {
+      await mongoose.connect(preferred, { serverSelectionTimeoutMS: 5000 });
+      console.log('Connected to MongoDB at', preferred.replace(/\/\/.*@/, '//***@'));
+      return;
+    } catch (err) {
+      console.warn('Primary MongoDB unavailable:', err.message);
+      console.warn('Falling back to in-memory MongoDB...');
+      const uri = await startMemoryMongo();
+      await mongoose.connect(uri);
+      console.log('Connected to in-memory MongoDB');
+    }
   }
 }
 
